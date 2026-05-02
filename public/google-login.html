@@ -24,6 +24,7 @@
       .then(res => res.json())
       .then(data => {
         console.log("Backend response:", data);
+        alert("Login success: " + JSON.stringify(data));
         // Here you can handle login success (e.g., redirect, save user info)
       })
       .catch(err => console.error("Error:", err));
@@ -32,7 +33,7 @@
     // Initialize Google Sign-In
     window.onload = function () {
       google.accounts.id.initialize({
-        client_id: "319315447147-8qpdo7jt3g41d5u525qkr86nncht8tj6.apps.googleusercontent.com",
+        client_id: "133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com",
         callback: handleCredentialResponse
       });
       google.accounts.id.renderButton(
