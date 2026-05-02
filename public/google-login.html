@@ -16,7 +16,7 @@
       console.log("Google ID Token:", idToken);
 
       // Send token to your backend for verification
-      fetch("https://adalo-auth-nine.vercel.app/auth/google", {
+      fetch("https://adalo-auth-seven.vercel.app/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: idToken })
