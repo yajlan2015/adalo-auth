@@ -1,36 +1,37 @@
-// index.js
 const express = require('express');
 const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());
 
-// ✅ Root route for testing
-app.get('/', (req, res) => {
-  res.send('Auth server is running 🚀');
-});
+// ✅ إعداد Google OAuth Client
+const googleClient = new OAuth2Client(
+  "133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com"
+);
 
-// ✅ Google OAuth setup
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
+// ✅ Route للتحقق من Google Token
 app.post('/auth/google', async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, email, name, picture } = req.body;
+
     if (!token) {
       return res.status(400).json({ error: 'Google token required' });
     }
 
+    // تحقق من التوكن مع Google
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: "133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com",
     });
 
     const payload = ticket.getPayload();
+
+    // رجع بيانات المستخدم
     res.json({
-      email: payload.email,
-      name: payload.name,
+      email: email || payload.email,
+      name: name || payload.name,
       googleId: payload.sub,
+      picture: picture || payload.picture
     });
   } catch (err) {
     console.error('Google auth error:', err);
@@ -38,37 +39,11 @@ app.post('/auth/google', async (req, res) => {
   }
 });
 
-// ✅ Apple Sign-In setup
-app.post('/auth/apple', async (req, res) => {
-  try {
-    const { identityToken } = req.body;
-    if (!identityToken) {
-      return res.status(400).json({ error: 'Apple identity token required' });
-    }
-
-    // Decode JWT from Apple
-    const decoded = jwt.decode(identityToken);
-
-    if (!decoded) {
-      return res.status(400).json({ error: 'Invalid Apple token' });
-    }
-
-    res.json({
-      email: decoded.email || 'hidden@apple.com', // Apple may hide email
-      name: decoded.name || 'Apple User',
-      appleId: decoded.sub,
-    });
-  } catch (err) {
-    console.error('Apple auth error:', err);
-    res.status(400).json({ error: 'Invalid Apple token' });
-  }
-});
-
-// ✅ Local development server
+// ✅ تشغيل محلي
 const PORT = process.env.PORT || 4000;
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`Auth server running on port ${PORT}`));
 }
 
-// ✅ Export for Vercel serverless deployment
+// ✅ تصدير لـ Vercel
 module.exports = app;
