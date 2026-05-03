@@ -1,53 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Google Login Test</title>
+  <title>Google Login</title>
+  <meta name="google-signin-client_id"
+        content="133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-  <div id="googleSignInDiv"></div>
+  <h2>Google Sign-In Demo</h2>
+  <div id="g_id_onload"
+       data-client_id="133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com"
+       data-callback="handleCredentialResponse">
+  </div>
+  <div class="g_id_signin" data-type="standard"></div>
 
   <script>
-    function handleCredentialResponse(response) {
-      const idToken = response.credential;
-      console.log("Google ID Token:", idToken);
+    async function handleCredentialResponse(response) {
+      const token = response.credential;
+      console.log("Google ID Token:", token);
 
-      // استخراج البيانات من التوكن مباشرة
-      const payload = JSON.parse(atob(idToken.split('.')[1]));
-      const email = payload.email;
-      const name = payload.name;
-      const picture = payload.picture;
+      try {
+        const res = await fetch("https://adalo-auth-5jki.vercel.app/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token })
+        });
 
-      // إرسال التوكن + البيانات للـ Backend
-      fetch("https://adalo-auth-5jki.vercel.app/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: idToken,
-          email: email,
-          name: name,
-          picture: picture
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log("Backend response:", data);
-        alert("Login success: " + JSON.stringify(data));
-      })
-      .catch(err => console.error("Error:", err));
+        const data = await res.json();
+        console.log("Backend Response:", data);
+        alert("Welcome " + data.name);
+      } catch (err) {
+        console.error("Error:", err);
+        alert("Login failed");
+      }
     }
-
-    window.onload = function () {
-      google.accounts.id.initialize({
-        client_id: "133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com",
-        callback: handleCredentialResponse
-      });
-      google.accounts.id.renderButton(
-        document.getElementById("googleSignInDiv"),
-        { theme: "outline", size: "large" }
-      );
-      google.accounts.id.prompt();
-    };
   </script>
 </body>
 </html>
