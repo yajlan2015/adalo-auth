@@ -2,12 +2,15 @@
 <html>
 <head>
   <title>Google Login</title>
+  <!-- ضع هنا الـ Client ID الخاص بك -->
   <meta name="google-signin-client_id"
         content="133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <h2>Google Sign-In Demo</h2>
+
+  <!-- إعداد زر Google -->
   <div id="g_id_onload"
        data-client_id="133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com"
        data-callback="handleCredentialResponse">
@@ -20,7 +23,8 @@
       console.log("Google ID Token:", token);
 
       try {
-        const res = await fetch("https://adalo-auth-seven.vercel.app/auth/google", {
+        // غيّر الرابط إلى رابط مشروعك على Replit
+        const res = await fetch("https://adalo-auth--yaajlanov2020.replit.app/auth/google", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token })
@@ -28,7 +32,12 @@
 
         const data = await res.json();
         console.log("Backend Response:", data);
-        alert("Welcome " + data.name);
+
+        if (data.error) {
+          alert("Login failed: " + data.error);
+        } else {
+          alert("Welcome " + data.name + " (" + data.email + ")");
+        }
       } catch (err) {
         console.error("Error:", err);
         alert("Login failed");
