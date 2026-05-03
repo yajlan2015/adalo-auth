@@ -7,7 +7,7 @@ app.use(express.json());
 
 // ✅ إعداد CORS
 app.use(cors({
-  origin: '*', // أو ضع رابط محدد مثل: 'https://adalo-auth-seven.vercel.app'
+  origin: 'https://adalo-auth-seven.vercel.app', // أو ضع رابط محدد مثل: 'https://adalo-auth-seven.vercel.app'
   methods: ['POST', 'GET'],
   allowedHeaders: ['Content-Type']
 }));
