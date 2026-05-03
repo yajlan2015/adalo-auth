@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Google Login</title>
-  <!-- ضع هنا الـ Client ID الخاص بك -->
+  <!-- ضع هنا الـ Client ID الخاص بك من Google Cloud Console -->
   <meta name="google-signin-client_id"
         content="133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -18,30 +18,12 @@
   <div class="g_id_signin" data-type="standard"></div>
 
   <script>
-    async function handleCredentialResponse(response) {
+    function handleCredentialResponse(response) {
       const token = response.credential;
       console.log("Google ID Token:", token);
 
-      try {
-        // غيّر الرابط إلى رابط مشروعك على Replit
-        const res = await fetch("https://adalo-auth--yaajlanov2020.replit.app/auth/google", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token })
-        });
-
-        const data = await res.json();
-        console.log("Backend Response:", data);
-
-        if (data.error) {
-          alert("Login failed: " + data.error);
-        } else {
-          alert("Welcome " + data.name + " (" + data.email + ")");
-        }
-      } catch (err) {
-        console.error("Error:", err);
-        alert("Login failed");
-      }
+      // ✅ رجّع التوكن إلى Adalo عبر Deep Link
+      window.location.href = "adalo://google-login?token=" + token;
     }
   </script>
 </body>
