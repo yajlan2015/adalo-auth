@@ -9,12 +9,18 @@ const googleClient = new OAuth2Client(
   "133843511650-am6noca4q3m9onveuji00dhb458otu8k.apps.googleusercontent.com"
 );
 
+// ✅ Route رئيسي للتأكد أن السيرفر شغال
+app.get('/', (req, res) => {
+  res.send('Auth server is running 🚀');
+});
+
 // ✅ Route للتحقق من Google Token
 app.post('/auth/google', async (req, res) => {
   try {
     const { token, email, name, picture } = req.body;
 
-    if (!token) {
+    // تحقق أن التوكن موجود
+    if (!token || token === "undefined" || token.trim() === "") {
       return res.status(400).json({ error: 'Google token required' });
     }
 
